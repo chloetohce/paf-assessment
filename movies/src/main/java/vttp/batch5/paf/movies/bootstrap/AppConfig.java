@@ -17,6 +17,7 @@ public class AppConfig {
 
     @Bean("datasource")
     public String datasource() {
+        System.out.println(datasource);
         return datasource;
     }
 
