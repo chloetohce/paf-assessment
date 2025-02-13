@@ -89,7 +89,7 @@ public class MovieService {
     Map<String, Object> params = new HashMap<>();
     params.put("DIRECTOR_TABLE_DATASET", directorsDS);
 
-    InputStream is = new FileInputStream("data/director_movies_report.jrxml");
+    InputStream is = new FileInputStream("app/data/director_movies_report.jrxml");
     JasperReport report = JasperCompileManager.compileReport(is);
 
     JasperPrint print = JasperFillManager.fillReport(report, params, reportDS);
