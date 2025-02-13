@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-public class Error {
+public class ErrorMessage {
     private String[] ids;
 
     private String error;
@@ -12,10 +12,10 @@ public class Error {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
 
-    public Error() {
+    public ErrorMessage() {
     }
 
-    public Error(String[] ids, String error, Date date) {
+    public ErrorMessage(String[] ids, String error, Date date) {
         this.ids = ids;
         this.error = error;
         this.date = date;

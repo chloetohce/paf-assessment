@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
+import vttp.batch5.paf.movies.models.ErrorMessage;
 import vttp.batch5.paf.movies.repositories.MongoMovieRepository;
 import vttp.batch5.paf.movies.repositories.MySQLMovieRepository;
 import static vttp.batch5.paf.movies.utils.Helper.SDF;
@@ -45,6 +47,9 @@ public class Dataloader {
 
   @Autowired
   private DataHandler handler;
+
+  @Autowired
+  private MongoMovieRepository mongoRepository;
 
   // TODO: Task 2
   public void checkDataLoaded() {
@@ -91,9 +96,13 @@ public class Dataloader {
             try {
               handler.handleBatchData(batch);
             } catch (Exception e) {
-              System.err.println("Error with batch processing");
-              System.err.println(e.getMessage());
-              e.printStackTrace();
+              System.out.println("Error with processing. CAUSE: %s" + e.getMessage());
+              
+              String[] ids = batch.stream()
+                .map(o -> o.getString("imdb_id"))
+                .toArray(String[]::new);
+              ErrorMessage err = new ErrorMessage(ids, e.getMessage(), new Date());
+              mongoRepository.logError(err);
             }
 
             // Reset batch

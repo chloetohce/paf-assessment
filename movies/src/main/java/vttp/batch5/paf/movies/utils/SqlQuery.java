@@ -7,5 +7,9 @@ public class SqlQuery {
         insert into imdb(imdb_id, vote_average, vote_count, release_date, revenue, budget, runtime)
         values(?, ?, ?, ?, ?, ?, ?)
         """;
+
+    public static final String REVENUE_BUDGET = """
+            select sum(revenue) as total_revenue, sum(budget) as total_budget from imdb where imdb_id in (:listIds);
+            """;
     
 }

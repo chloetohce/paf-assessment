@@ -3,12 +3,20 @@ package vttp.batch5.paf.movies.repositories;
 import java.util.List;
 
 import org.bson.Document;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.LimitOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import jakarta.json.JsonObject;
-import vttp.batch5.paf.movies.models.Error;
+import vttp.batch5.paf.movies.models.ErrorMessage;
 import vttp.batch5.paf.movies.utils.Helper;
 
 @Repository
@@ -71,7 +79,7 @@ public class MongoMovieRepository {
      *      }
      *  )
      */
-    public void logError(Error err) {
+    public void logError(ErrorMessage err) {
         Document toInsert = new Document()
             .append("imdb_ids", err.getIds())
             .append("error", err.getError())
@@ -85,5 +93,39 @@ public class MongoMovieRepository {
     //
     // native MongoDB query here
     //
+    /*
+     *  db.imdb.aggregate([
+     *      {$match: {
+     *          director: {$ne: ''}
+     *      }},
+     *      {
+     *          $group: {
+     *              _id: '$director',
+     *              movies_count: {$sum: 1},
+     *              movie_ids: {$push: '$_id'}
+     *          }
+     *      }, 
+     *      {$sort: {movies_count:-1}},
+     *      {$limit: <limit>}
+     *  ])
+     */
+    public List<Document> groupByDirectors(long limit) {
+        MatchOperation notEmpty = Aggregation.match(
+            Criteria.where("director").ne("")
+        );
+
+        GroupOperation groupByDirector = Aggregation.group("director")
+            .count().as("movies_count")
+            .push("_id").as("movie_ids");
+        
+        SortOperation sortMovieCount = Aggregation.sort(Sort.Direction.DESC, "movies_count");
+
+        LimitOperation limitOps = Aggregation.limit(limit);
+
+        Aggregation pipeline = Aggregation.newAggregation(notEmpty, groupByDirector, sortMovieCount, limitOps);
+        List<Document> results = template.aggregate(pipeline, Helper.COL_IMDB, Document.class).getMappedResults();
+
+        return results;
+    }
 
 }
