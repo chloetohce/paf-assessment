@@ -22,7 +22,7 @@ public class MoviesApplication implements CommandLineRunner {
 		SpringApplication app = new SpringApplication(MoviesApplication.class);
 
 		ApplicationArguments arguments = new DefaultApplicationArguments(args);
-		String datasource = "data/movies_post_2010.zip";
+		String datasource = "app/data/movies_post_2010.zip";
 		if (arguments.containsOption("load")) {
 			datasource = arguments.getOptionValues("load").getFirst();
 		}

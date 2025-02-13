@@ -22,7 +22,7 @@ COPY --from=builder /compiledir/target/movies-0.0.1-SNAPSHOT.jar app.jar
 COPY --from=builder /compiledir/data data
 
 ENV SERVER_PORT=8080
-ENV DATASOURCE="data/movies_post_2010.zip"
+ENV DATASOURCE="app/data/movies_post_2010.zip"
 
 EXPOSE ${SERVER_PORT}
 
