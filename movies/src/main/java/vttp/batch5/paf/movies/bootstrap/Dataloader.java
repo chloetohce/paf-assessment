@@ -3,6 +3,7 @@ package vttp.batch5.paf.movies.bootstrap;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -15,6 +16,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -42,7 +44,8 @@ public class Dataloader {
   @Autowired
   private MongoTemplate mongoTemplate;
 
-  @Value("${datasource}")
+  @Autowired
+  @Qualifier("datasource")
   private String datasource;
 
   @Autowired
@@ -113,8 +116,10 @@ public class Dataloader {
         
       }
       
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+      System.exit(1);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (ParseException e) {
       e.printStackTrace();
