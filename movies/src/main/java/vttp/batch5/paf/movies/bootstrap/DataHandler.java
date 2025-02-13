@@ -22,6 +22,5 @@ public class DataHandler {
     public void handleBatchData(List<JsonObject> data) {
         sqlRepository.batchInsertMovies(data);
         mongoRepository.batchInsertMovies(data);
-        System.out.println("batch");
     }
 }

@@ -25,4 +25,4 @@ ENV SERVER_PORT=8080
 
 EXPOSE ${SERVER_PORT}
 
-ENTRYPOINT SERVER_PORT=${SERVER_PORT} java -jar app.jar
+ENTRYPOINT SERVER_PORT=${SERVER_PORT} java -jar app.jar --load="/data/movies_post_2010.zip"
